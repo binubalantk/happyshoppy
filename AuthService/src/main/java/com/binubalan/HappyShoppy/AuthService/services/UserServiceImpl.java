@@ -7,24 +7,37 @@ import com.binubalan.HappyShoppy.AuthService.entities.AppUser;
 import com.binubalan.HappyShoppy.AuthService.entities.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Override
     public AppUser saveUser(AppUser user) {
         log.info("Saving the user {} to db", user.getUsername());
-        return userRepo.save(user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        AppUser userSaved =  userRepo.save(user);
+        userRepo.flush();
+        return userSaved;
     }
 
     @Override
@@ -51,5 +64,24 @@ public class UserServiceImpl implements UserService {
     public List<AppUser> getUsers() {
         log.info("Getting all users");
         return userRepo.findAll();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        AppUser user = userRepo.findByUsername(username);
+        if (user == null) {
+            log.error("User {} not found", username);
+            throw new UsernameNotFoundException("User not found");
+        } else {
+            log.info("User {} found", username);
+        }
+
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        user.getRoles()
+                .forEach(role -> {
+                    authorities.add(new SimpleGrantedAuthority(role.getName()));
+                });
+
+        return new User(user.getUsername(), user.getPassword(), authorities);
     }
 }
