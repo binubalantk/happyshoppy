@@ -1,0 +1,47 @@
+spring:
+    application:
+        name: HappyShoppy-Catalogservice
+    main:
+        allow-bean-definition-overriding: false
+    datasource:
+        url: jdbc:postgresql://localhost:55000/happyshoppymaster
+        port: 55000
+        username: postgres
+        password: postgrespw
+        driver: org.postgresql.Driver
+    jpa:
+        generate-ddl: true
+        properties:
+            hibernate:
+                enable_lazy_load_no_trans: true
+    hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+        hbm2ddl:
+            auto: create-only
+        entitymanager:
+            packagesToScan: com.binubalan.HappyShoppy.CatalogService
+server:
+    port: 9004
+
+debug: true
+logging:
+    path: ./logs
+    level:
+        root: ERROR
+
+---
+spring:
+    profiles: dev
+    application:
+        name: HappyShoppy-Catalogservice
+server:
+    port: 9090
+
+---
+spring:
+    profiles: prod
+    application:
+        name: HappyShoppy-Catalogservice
+server:
+    port: 80
