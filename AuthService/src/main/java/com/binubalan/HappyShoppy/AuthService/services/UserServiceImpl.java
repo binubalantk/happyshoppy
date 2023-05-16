@@ -25,12 +25,9 @@ import java.util.List;
 @Transactional
 @Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
-
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
-
     private final PasswordEncoder passwordEncoder;
-
     @Override
     public AppUser saveUser(AppUser user) {
         log.info("Saving the user {} to db", user.getUsername());
@@ -39,7 +36,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepo.flush();
         return userSaved;
     }
-
     @Override
     public Role saveRole(Role role) {
         log.info("Saving the role {} to db", role.getName());

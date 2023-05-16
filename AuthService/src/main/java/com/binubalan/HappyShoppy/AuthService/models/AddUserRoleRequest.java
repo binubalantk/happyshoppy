@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class AddUserRoleRequest {
     private String username;
-    private String password;
+    private String rolename;
 }

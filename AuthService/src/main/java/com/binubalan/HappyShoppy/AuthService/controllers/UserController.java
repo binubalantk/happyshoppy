@@ -46,7 +46,7 @@ public class UserController {
     public ResponseEntity addRole(@RequestBody AddUserRoleRequest addUserRoleRequest){
         userService.addRoleToUser(
                 addUserRoleRequest.getUsername(),
-                addUserRoleRequest.getPassword());
+                addUserRoleRequest.getRolename());
         return ResponseEntity.ok().build();
     }
 

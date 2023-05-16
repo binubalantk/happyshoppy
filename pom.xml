@@ -24,6 +24,7 @@
     <modules>
         <module>CatalogService</module>
         <module>AuthService</module>
+        <module>CartService</module>
     </modules>
 
     <dependencyManagement>

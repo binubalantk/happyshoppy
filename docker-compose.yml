@@ -1,0 +1,30 @@
+services:
+    hs-auth-service:
+        build:
+            context: ./AuthService
+        image: hs-auth-service:0.1
+        restart: on-failure
+        depends_on:
+            -   hs-postgres
+        ports:
+            -   9010:9010
+        environment:
+            SPRING_DATASOURCE_URL: jdbc:postgresql://hs-postgres:5432/happyshoppymaster
+            SPRING_DATASOURCE_USERNAME: postgres
+            SPRING_DATASOURCE_PASSWORD: postgrespw
+        volumes:
+            - './:/src'
+
+    hs-postgres:
+        image: postgres:latest
+        restart: on-failure
+        environment:
+            -   POSTGRES_USER=postgres
+            -   POSTGRES_PASSWORD=postgrespw
+        ports:
+            -   '5432:5432'
+        volumes:
+            - db:/var/lib/postgresql/data
+volumes:
+    db:
+        driver: local
